@@ -33,12 +33,12 @@ const httpRequestListener = function (request, response) {
     const {url, method} = request
 
     if (method === 'GET') {
-        if (url === '/users') {
+        if (url === '/ping') {
             response.writeHead(200, {'Content-Type' : 'application/json'})
-            response.end(JSON.stringify({message : 'userCreated'}))
+            response.end(JSON.stringify({message : 'pong'}))
         }
     } else if (method === 'POST') {
-      if(url === '/users/signup') {
+      if(url === '/posts') {
         let body = '';
 
         request.on('data', (data) => {
@@ -48,14 +48,14 @@ const httpRequestListener = function (request, response) {
         request.on('end', () => {
           const user = JSON.parse(body);
 
-          users.push({
-            id : user.id,
-            name : user.name,
-            email: user.email,
-            password : user.password
+          posts.push({
+            id : posts.id,
+            title : posts.title,
+            content: posts.content,
+            userId : posts.userId
           })
           response.writeHead(201, {'Content-Type' : 'application/json'})
-          response.end(JSON.stringify({message : 'userCreated'}));
+          response.end(JSON.stringify({message : 'postCreated'}));
         })
       }
     }
