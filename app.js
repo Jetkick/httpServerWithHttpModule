@@ -30,35 +30,45 @@ const posts = [{
 ];
 
 const httpRequestListener = function (request, response) {
-    const {url, method} = request
+  const {url, method} = request
 
-    if (method === 'GET') {
-        if (url === '/ping') {
-            response.writeHead(200, {'Content-Type' : 'application/json'})
-            response.end(JSON.stringify({message : 'pong'}))
-        }
-    } else if (method === 'POST') {
-      if(url === '/posts') {
-        let body = '';
-
-        request.on('data', (data) => {
-          body += data;
-        })
-      
-        request.on('end', () => {
-          const user = JSON.parse(body);
-
-          posts.push({
-            id : posts.id,
-            title : posts.title,
-            content: posts.content,
-            userId : posts.userId
-          })
-          response.writeHead(201, {'Content-Type' : 'application/json'})
-          response.end(JSON.stringify({message : 'postCreated'}));
-        })
+  if (method === 'GET') {
+      if (url === '/users') {
+          response.writeHead(200, {'Content-Type' : 'application/json'})
+          response.end(JSON.stringify({message : 'ping'}))
       }
+  } else if (method === 'POST') {
+    if(url === '/users/signup' || url === '/posts') {
+      let body = '';
+
+      request.on('data', (data) => {
+        body += data;
+      })
+    
+      request.on('end', () => {
+        const user = JSON.parse(body);
+
+        const post = JSON.parse(body);
+
+        users.push({
+          id : user.id,
+          name : user.name,
+          email: user.email,
+          password : user.password
+        })
+
+        posts.push({
+          id : post.id,
+          title : post.title,
+          content: post.content,
+          userId : post.userId
+        })
+
+        response.writeHead(201, {'Content-Type' : 'application/json'})
+        response.end(JSON.stringify({message : 'created'}));
+      })
     }
+  }
 };
 
 server.on("request", httpRequestListener);
@@ -67,5 +77,5 @@ const IP = '127.0.0.1'
 const PORT = 8000
 
 server.listen(PORT, IP, function() {
-    console.log(`Listening to request on ip ${IP} & port ${PORT}`)
+  console.log(`Listening to request on ip ${IP} & port ${PORT}`)
 });
